@@ -209,11 +209,12 @@ export class SettingsPreset < TProps extends SettingsPresetProps = SettingsPrese
     updateTranslationSettings( update: Partial< TranslationSettings > ) {
 
         this.props.translation = {
-            ...this.props.translation,
             enabled: false,
+            source: 'gemini',
             target_language: 'en',
             api_key: '',
-            model: 'gemini-3.1-flash-lite',
+            model: 'gemini-3.1-flash-lite-preview',
+            koboldcpp_host: 'http://localhost:5001',
             ...this.props.translation,
             ...update,
         };

@@ -99,9 +99,11 @@ export function getDefaultSettingsPresetProps(): SettingsPresetProps {
         },
         translation: {
             enabled: false,
+            source: 'gemini',
             target_language: 'en',
             api_key: '',
-            model: 'gemini-3.1-flash-lite',
+            model: 'gemini-3.1-flash-lite-preview',
+            koboldcpp_host: 'http://localhost:5001',
         },
 
         created_at: new Date(),

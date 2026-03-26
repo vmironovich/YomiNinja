@@ -1,7 +1,7 @@
 import { Box, Container, FormControlLabel, FormGroup, MenuItem, Select, Switch, SxProps, TextField, Theme, Typography } from "@mui/material";
 import { SettingsContext } from "../../context/settings.provider";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { TranslationSettings as TranslationSettingsType } from "../../../electron-src/@core/domain/settings_preset/settings_preset_translation";
+import { ChangeEvent, useContext } from "react";
+import { TranslationSettings as TranslationSettingsType, TranslationSource } from "../../../electron-src/@core/domain/settings_preset/settings_preset_translation";
 
 
 export default function TranslationSettings() {
@@ -9,6 +9,7 @@ export default function TranslationSettings() {
     const { activeSettingsPreset, updateActivePresetTranslation } = useContext( SettingsContext );
 
     const translation: TranslationSettingsType | undefined = activeSettingsPreset?.translation;
+    const source: TranslationSource = translation?.source || 'gemini';
 
     const switchFormControlLabelSx: SxProps<Theme> = {
         mt: 0.1,
@@ -40,22 +41,87 @@ export default function TranslationSettings() {
                         }
                     />
 
-                    <TextField type="password"
-                        label="Gemini API Key"
-                        size="small"
-                        value={ translation?.api_key || '' }
-                        onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-                            updateActivePresetTranslation({
-                                api_key: event.target.value
-                            });
-                        }}
+                    <FormControlLabel label='Source' labelPlacement="top"
                         sx={{
-                            width: '100%',
-                            maxWidth: '450px',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            ml: 0,
                             mt: 2,
-                            mb: 2,
+                            mb: 2
                         }}
+                        control={
+                            <Select size="small"
+                                value={ source }
+                                onChange={ ( event ) => {
+                                    updateActivePresetTranslation({
+                                        source: event.target.value as TranslationSource
+                                    });
+                                }}
+                                sx={{ width: '200px' }}
+                            >
+                                <MenuItem value='gemini'>Gemini</MenuItem>
+                                <MenuItem value='koboldcpp'>KoboldCpp</MenuItem>
+                            </Select>
+                        }
                     />
+
+                    { source === 'gemini' && (
+                        <>
+                            <TextField type="password"
+                                label="Gemini API Key"
+                                size="small"
+                                value={ translation?.api_key || '' }
+                                onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+                                    updateActivePresetTranslation({
+                                        api_key: event.target.value
+                                    });
+                                }}
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: '450px',
+                                    mt: 0,
+                                    mb: 2,
+                                }}
+                            />
+
+                            <TextField type="text"
+                                label="Model"
+                                size="small"
+                                value={ translation?.model || 'gemini-3.1-flash-lite-preview' }
+                                onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+                                    updateActivePresetTranslation({
+                                        model: event.target.value
+                                    });
+                                }}
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: '450px',
+                                    mt: 0,
+                                    mb: 2,
+                                }}
+                            />
+                        </>
+                    )}
+
+                    { source === 'koboldcpp' && (
+                        <TextField type="text"
+                            label="KoboldCpp Host"
+                            size="small"
+                            placeholder="http://localhost:5001"
+                            value={ translation?.koboldcpp_host || '' }
+                            onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+                                updateActivePresetTranslation({
+                                    koboldcpp_host: event.target.value
+                                });
+                            }}
+                            sx={{
+                                width: '100%',
+                                maxWidth: '450px',
+                                mt: 0,
+                                mb: 2,
+                            }}
+                        />
+                    )}
 
                     <FormControlLabel label='Target language' labelPlacement="top"
                         sx={{
@@ -83,23 +149,6 @@ export default function TranslationSettings() {
                                 <MenuItem value='de'>German</MenuItem>
                             </Select>
                         }
-                    />
-
-                    <TextField type="text"
-                        label="Model"
-                        size="small"
-                        value={ translation?.model || 'gemini-2.0-flash' }
-                        onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-                            updateActivePresetTranslation({
-                                model: event.target.value
-                            });
-                        }}
-                        sx={{
-                            width: '100%',
-                            maxWidth: '450px',
-                            mt: 0,
-                            mb: 2,
-                        }}
                     />
 
                 </FormGroup>

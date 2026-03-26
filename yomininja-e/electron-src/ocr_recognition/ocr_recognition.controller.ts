@@ -21,6 +21,7 @@ import { Notification } from 'electron';
 import { pushInAppNotification } from "../common/notification_helpers";
 import { HardwareAccelerationOption } from "../@core/application/adapters/ocr.adapter";
 import { translateTextLines } from "../@core/infra/translation/gemini_translation.adapter";
+import { translateTextLinesKoboldCpp } from "../@core/infra/translation/koboldcpp_translation.adapter";
 import { TranslationSettings } from "../@core/domain/settings_preset/settings_preset_translation";
 
 export type Recognition_Output = {
@@ -341,7 +342,12 @@ export class OcrRecognitionController {
             const settingsPreset = await this.ocrRecognitionService.getActiveSettingsPreset();
             const translation = settingsPreset?.translation;
 
-            if ( !translation?.enabled || !translation?.api_key ) return;
+            if ( !translation?.enabled ) return;
+
+            const source = translation.source || 'gemini';
+
+            if ( source === 'gemini' && !translation.api_key ) return;
+            if ( source === 'koboldcpp' && !translation.koboldcpp_host ) return;
 
             const textLines: string[] = [];
             const lineRefs: { regionIdx: number; resultIdx: number; textIdx: number }[] = [];
@@ -359,12 +365,22 @@ export class OcrRecognitionController {
 
             if ( !textLines.length ) return;
 
-            const translatedLines = await translateTextLines({
-                textLines,
-                targetLanguage: translation.target_language,
-                apiKey: translation.api_key,
-                model: translation.model || 'gemini-2.0-flash',
-            });
+            let translatedLines: string[];
+
+            if ( source === 'koboldcpp' ) {
+                translatedLines = await translateTextLinesKoboldCpp({
+                    textLines,
+                    targetLanguage: translation.target_language,
+                    host: translation.koboldcpp_host,
+                });
+            } else {
+                translatedLines = await translateTextLines({
+                    textLines,
+                    targetLanguage: translation.target_language,
+                    apiKey: translation.api_key,
+                    model: translation.model || 'gemini-3.1-flash-lite-preview',
+                });
+            }
 
             translatedLines.forEach( ( translated, i ) => {
                 const ref = lineRefs[i];
