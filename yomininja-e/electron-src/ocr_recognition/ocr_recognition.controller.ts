@@ -20,6 +20,8 @@ import { cloneDeep, find } from 'lodash';
 import { Notification } from 'electron';
 import { pushInAppNotification } from "../common/notification_helpers";
 import { HardwareAccelerationOption } from "../@core/application/adapters/ocr.adapter";
+import { translateTextLines } from "../@core/infra/translation/gemini_translation.adapter";
+import { TranslationSettings } from "../@core/domain/settings_preset/settings_preset_translation";
 
 export type Recognition_Output = {
     result: OcrResultScalable | null;
@@ -209,6 +211,9 @@ export class OcrRecognitionController {
             let resultJson = ocrResultScalable;
 
             if ( ocrResultScalable ) {
+
+                await this.applyTranslation( ocrResultScalable );
+
                 const overlayBounds = this.overlayWindow.getBounds();
                 ocrResultScalable.position = {
                     top: overlayBounds.y,
@@ -229,7 +234,7 @@ export class OcrRecognitionController {
         } catch (error) {
             console.error( error );
         }
-        
+
         this.recognizing = false;
 
         console.timeEnd('Recognition time');
@@ -271,6 +276,9 @@ export class OcrRecognitionController {
             let resultJson = ocrResultScalable;
 
             if ( ocrResultScalable ) {
+
+                await this.applyTranslation( ocrResultScalable );
+
                 const overlayBounds = this.overlayWindow.getBounds();
                 ocrResultScalable.position = {
                     top: overlayBounds.y,
@@ -325,6 +333,58 @@ export class OcrRecognitionController {
 
     isRecognizing(): boolean {
         return this.recognizing;
+    }
+
+    private async applyTranslation( ocrResultScalable: OcrResultScalable ): Promise<void> {
+
+        try {
+            const settingsPreset = await this.ocrRecognitionService.getActiveSettingsPreset();
+            const translation = settingsPreset?.translation;
+
+            if ( !translation?.enabled || !translation?.api_key ) return;
+
+            const textLines: string[] = [];
+            const lineRefs: { regionIdx: number; resultIdx: number; textIdx: number }[] = [];
+
+            ocrResultScalable.ocr_regions.forEach( ( region, regionIdx ) => {
+                region.results.forEach( ( result, resultIdx ) => {
+                    result.text.forEach( ( textLine, textIdx ) => {
+                        if ( textLine.content?.trim() ) {
+                            textLines.push( textLine.content );
+                            lineRefs.push({ regionIdx, resultIdx, textIdx });
+                        }
+                    });
+                });
+            });
+
+            if ( !textLines.length ) return;
+
+            const translatedLines = await translateTextLines({
+                textLines,
+                targetLanguage: translation.target_language,
+                apiKey: translation.api_key,
+                model: translation.model || 'gemini-2.0-flash',
+            });
+
+            translatedLines.forEach( ( translated, i ) => {
+                const ref = lineRefs[i];
+                ocrResultScalable.ocr_regions[ ref.regionIdx ]
+                    .results[ ref.resultIdx ]
+                    .text[ ref.textIdx ]
+                    .content = translated;
+            });
+
+        } catch ( error ) {
+            console.error( 'Translation failed:', error );
+            pushInAppNotification({
+                notification: {
+                    type: 'error',
+                    message: 'Translation failed! Showing original text.',
+                    autoHideDuration: 5000,
+                },
+                windows: [ this.overlayWindow ]
+            });
+        }
     }
 
     async ocrResultToJson( result: OcrResultScalable ): Promise<OcrResultScalable > {

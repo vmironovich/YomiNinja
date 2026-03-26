@@ -6,6 +6,7 @@ import AppSettingsVisuals from "./AppSettingsVisuals";
 import AppSettingsOthers from "./AppSettingsOthers";
 import AppSettingsOcrEngine from "./AppSettingsOcrEngine";
 import AppSettingsGeneral from "./AppSettingsGeneral";
+import TranslationSettings from "./TranslationSettings";
 
 
 export default function AppSettingsMenu() {
@@ -55,6 +56,12 @@ export default function AppSettingsMenu() {
             <SettingsSection>
 
                 <AppSettingsOcrEngine/>
+
+            </SettingsSection>
+
+            <SettingsSection>
+
+                <TranslationSettings/>
 
             </SettingsSection>
 

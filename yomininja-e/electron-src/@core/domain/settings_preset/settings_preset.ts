@@ -3,6 +3,7 @@ import { OverlaySettings } from "./settings_preset_overlay";
 import { GeneralSettings } from "./settings_preset_general";
 import { getDefaultSettingsPresetProps } from "./default_settings_preset_props";
 import { CompatibilitySettings } from "./settings_preset_compatibility";
+import { TranslationSettings } from "./settings_preset_translation";
 
 export type DictionarySettings = {
     enabled: boolean;
@@ -22,6 +23,7 @@ export interface SettingsPresetProps < TOcrSettings extends OcrEngineSettings = 
     overlay: OverlaySettings;
     ocr_engines: TOcrSettings[];
     dictionary: DictionarySettings;
+    translation?: TranslationSettings;
     version: string;
     created_at: Date;
     updated_at: Date;
@@ -79,6 +81,8 @@ export class SettingsPreset < TProps extends SettingsPresetProps = SettingsPrese
     get overlay(){ return this.props.overlay; }
     get ocr_engines() { return this.props.ocr_engines; }
     get version() { return this.props.version; }
+
+    get translation(){ return this.props.translation; }
 
     get created_at(){ return this.props.created_at; }
     get updated_at(){ return this.props.updated_at; }
@@ -194,10 +198,23 @@ export class SettingsPreset < TProps extends SettingsPresetProps = SettingsPrese
         });
     }
 
-    updateDictionarySettings( update: Partial< DictionarySettings > ) {             
+    updateDictionarySettings( update: Partial< DictionarySettings > ) {
 
         this.props.dictionary = {
             ...this.props.dictionary,
+            ...update,
+        };
+    }
+
+    updateTranslationSettings( update: Partial< TranslationSettings > ) {
+
+        this.props.translation = {
+            ...this.props.translation,
+            enabled: false,
+            target_language: 'en',
+            api_key: '',
+            model: 'gemini-3.1-flash-lite',
+            ...this.props.translation,
             ...update,
         };
     }

@@ -97,6 +97,12 @@ export function getDefaultSettingsPresetProps(): SettingsPresetProps {
         dictionary: {
             enabled: false,
         },
+        translation: {
+            enabled: false,
+            target_language: 'en',
+            api_key: '',
+            model: 'gemini-3.1-flash-lite',
+        },
 
         created_at: new Date(),
         updated_at: new Date()

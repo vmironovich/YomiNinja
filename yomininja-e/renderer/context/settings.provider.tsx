@@ -1,5 +1,6 @@
 import { PropsWithChildren, createContext, useEffect, useState } from "react";
 import { DictionarySettings, OcrEngineSettings, SettingsPresetJson, SettingsPresetProps } from "../../electron-src/@core/domain/settings_preset/settings_preset";
+import { TranslationSettings } from "../../electron-src/@core/domain/settings_preset/settings_preset_translation";
 import { Alert, Backdrop, CircularProgress, Snackbar, Typography, debounce } from "@mui/material";
 import { OcrEngineSettingsU } from "../../electron-src/@core/infra/types/entity_instance.types";
 import { OverlayBehavior, OverlayHotkeys, OverlayVisualCustomizations } from "../../electron-src/@core/domain/settings_preset/settings_preset_overlay";
@@ -20,6 +21,7 @@ export type SettingsContextType = {
     updateActivePresetOcrEngine: ( input: Partial< OcrEngineSettingsU > ) => void; 
     updateActivePresetCompatibility: ( input: Partial< CompatibilitySettings > ) => void;
     updateActivePresetDictionary: ( input: Partial< DictionarySettings > ) => void;
+    updateActivePresetTranslation: ( input: Partial< TranslationSettings > ) => void;
     triggerOcrEngineRestart: ( engineName: string ) => void;
     loadCloudVisionCredentialsFile: () => Promise< void >;
     openCloudVisionPage: () => void;
@@ -56,7 +58,17 @@ export const SettingsProvider = ( { children }: PropsWithChildren ) => {
             ...activeSettingsPreset?.dictionary,
             ...input,
         };
-        
+
+        updateActivePreset( activeSettingsPreset );
+    }
+
+    function updateActivePresetTranslation( input: Partial< TranslationSettings > ) {
+
+        activeSettingsPreset.translation = {
+            ...activeSettingsPreset?.translation,
+            ...input,
+        };
+
         updateActivePreset( activeSettingsPreset );
     }
 
@@ -366,6 +378,7 @@ export const SettingsProvider = ( { children }: PropsWithChildren ) => {
                 updateActivePresetOcrEngine,
                 updateActivePresetCompatibility,
                 updateActivePresetDictionary,
+                updateActivePresetTranslation,
                 triggerOcrEngineRestart,
                 loadCloudVisionCredentialsFile,
                 openCloudVisionPage,
