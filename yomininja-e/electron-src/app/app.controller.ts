@@ -228,8 +228,9 @@ export class AppController {
             if ( !message )
                 return;
         
+            console.log('[Settings IPC] Translation data received:', JSON.stringify(message.translation));
             const { restartOcrAdapter } = await settingsController.updateSettingsPreset( message );
-        
+
             uIOhook.removeAllListeners();
 
             this.applySettingsPreset( message );

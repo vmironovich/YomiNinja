@@ -65,9 +65,17 @@ export const SettingsProvider = ( { children }: PropsWithChildren ) => {
     function updateActivePresetTranslation( input: Partial< TranslationSettings > ) {
 
         activeSettingsPreset.translation = {
+            enabled: false,
+            source: 'gemini',
+            target_language: 'en',
+            api_key: '',
+            model: 'gemini-3.1-flash-lite-preview',
+            koboldcpp_host: 'http://localhost:5001',
             ...activeSettingsPreset?.translation,
             ...input,
         };
+
+        console.log('[Translation] Settings updated:', activeSettingsPreset.translation);
 
         updateActivePreset( activeSettingsPreset );
     }
