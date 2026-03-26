@@ -356,15 +356,22 @@ export class OcrRecognitionController {
                 return;
             }
 
+            const japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\u3400-\u4DBF]/;
+            const hideNonJapanese = translation.hide_non_japanese;
+
             const textLines: string[] = [];
             const lineRefs: { regionIdx: number; resultIdx: number; textIdx: number }[] = [];
 
             ocrResultScalable.ocr_regions.forEach( ( region, regionIdx ) => {
                 region.results.forEach( ( result, resultIdx ) => {
                     result.text.forEach( ( textLine, textIdx ) => {
-                        if ( textLine.content?.trim() ) {
+                        if ( !textLine.content?.trim() ) return;
+
+                        if ( japaneseRegex.test( textLine.content ) ) {
                             textLines.push( textLine.content );
                             lineRefs.push({ regionIdx, resultIdx, textIdx });
+                        } else if ( hideNonJapanese ) {
+                            textLine.content = '';
                         }
                     });
                 });
@@ -372,7 +379,10 @@ export class OcrRecognitionController {
 
             console.log(`[Translation] ${textLines.length} text lines to translate:`, textLines);
 
-            if ( !textLines.length ) return;
+            if ( !textLines.length ) {
+                console.log('[Translation] No Japanese text found, skipping');
+                return;
+            }
 
             let translatedLines: string[];
 

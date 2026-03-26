@@ -41,6 +41,20 @@ export default function TranslationSettings() {
                         }
                     />
 
+                    <FormControlLabel label='Hide non-Japanese text from overlay'
+                        sx={ switchFormControlLabelSx }
+                        control={
+                            <Switch
+                                checked={ Boolean( translation?.hide_non_japanese ) }
+                                onChange={ ( event ) => {
+                                    updateActivePresetTranslation({
+                                        hide_non_japanese: event.target.checked
+                                    });
+                                }}
+                            />
+                        }
+                    />
+
                     <FormControlLabel label='Source' labelPlacement="top"
                         sx={{
                             display: 'flex',

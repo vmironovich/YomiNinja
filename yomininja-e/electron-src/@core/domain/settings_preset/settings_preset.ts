@@ -216,6 +216,7 @@ export class SettingsPreset < TProps extends SettingsPresetProps = SettingsPrese
             api_key: '',
             model: 'gemini-3.1-flash-lite-preview',
             koboldcpp_host: 'http://localhost:5001',
+            hide_non_japanese: false,
             ...this.props.translation,
             ...update,
         };
