@@ -1,5 +1,5 @@
 import { CSSProperties, useEffect, useRef, useState } from "react";
-import { OcrItemScalable, OcrTextLineScalable, OcrTextLineSymbolScalable } from "../../../electron-src/@core/domain/ocr_result_scalable/ocr_result_scalable";
+import { OcrItemScalable, OcrTextLineScalable } from "../../../electron-src/@core/domain/ocr_result_scalable/ocr_result_scalable";
 import { styled } from "@mui/material";
 import { OverlayBehavior, OverlayHotkeys, OverlayOcrItemBoxVisuals } from "../../../electron-src/@core/domain/settings_preset/settings_preset_overlay";
 import OcrResultLine from "./OcrResultLine";
@@ -181,21 +181,39 @@ export default function OcrResultBox( props: {
         }
     }
 
-    const Box = styled( BaseOcrResultBox )({
-        "&:hover": activeBoxCss,
-        "&.editable": activeBoxCss,
+    const alwaysShowText = props.overlayBehavior?.always_show_text;
+
+    const defaultBoxCss: CSSProperties = {
         backgroundColor: ocrItemBoxVisuals.background_color_inactive,
         outlineColor: ocrItemBoxVisuals?.inactive_border_color || 'red',
         outlineWidth: ocrItemBoxVisuals?.border_width || '0px',
         borderRadius: ocrItemBoxVisuals?.border_radius || '0rem',
-        writingMode: isVertical ? 'vertical-rl' :'inherit',
-        textOrientation: isVertical ? 'upright' :'inherit',
+        writingMode: isVertical ? 'vertical-rl' : 'inherit',
+        textOrientation: isVertical ? 'upright' : 'inherit',
         fontSize: fontSize + 'px',
         lineHeight: fontSize + 'px',
         contentVisibility: 'hidden',
         alignItems: alignItems,
-        flexDirection: isVertical ? 'column' : 'column', // why booth column?
+        flexDirection: 'column',
         justifyContent: isMultiline ? 'space-between' : 'center',
+    };
+
+    if ( alwaysShowText ) {
+        Object.assign( defaultBoxCss, {
+            backgroundColor: activeBoxCss.backgroundColor,
+            outlineColor: activeBoxCss.outlineColor,
+            color: activeBoxCss.color,
+            fontWeight: activeBoxCss.fontWeight,
+            fontSize: activeBoxCss.fontSize,
+            lineHeight: activeBoxCss.lineHeight,
+            contentVisibility: 'visible',
+        });
+    }
+
+    const Box = styled( BaseOcrResultBox )({
+        "&:hover": activeBoxCss,
+        "&.editable": activeBoxCss,
+        ...defaultBoxCss,
     });
 
     const { width } = box.dimensions;

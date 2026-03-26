@@ -111,6 +111,20 @@ export default function AppSettingsOthers() {
                         }
                     />
 
+                    <FormControlLabel label='Always show text (no hover needed)'
+                        sx={ switchFormControlLabelSx }
+                        control={
+                            <Switch
+                                checked={ Boolean( overlayBehavior?.always_show_text ) }
+                                onChange={ ( event ) => {
+                                    updateActivePresetBehavior({
+                                        always_show_text: event.target.checked
+                                    });
+                                }}
+                            />
+                        }
+                    />
+
                     <FormControlLabel label='Show overlay without stealing focus'
                         sx={{
                             ...switchFormControlLabelSx,

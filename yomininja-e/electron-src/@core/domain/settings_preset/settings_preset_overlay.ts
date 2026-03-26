@@ -80,6 +80,7 @@ export type OverlayBehavior = {
     show_window_without_focus: boolean;
     hide_results_on_blur: boolean;
     automatic_adjustment: boolean; // Overlay automatic positioning and resizing
+    always_show_text: boolean;
 };
 
 export type OverlayHotkeys = {

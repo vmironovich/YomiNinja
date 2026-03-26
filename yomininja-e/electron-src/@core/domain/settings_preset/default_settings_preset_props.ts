@@ -91,6 +91,7 @@ export function getDefaultSettingsPresetProps(): SettingsPresetProps {
                 show_window_without_focus: false,
                 hide_results_on_blur: false,
                 automatic_adjustment: true,
+                always_show_text: false,
             }
         },
         ocr_engines: [],
