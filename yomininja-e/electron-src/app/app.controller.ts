@@ -30,9 +30,6 @@ import { sleep } from "../util/sleep.util";
 import electronIsDev from "electron-is-dev";
 import { ipcMain } from "../common/ipc_main";
 import { isLinux, isWaylandDisplay, isWindows, isMacOS } from "../util/environment.util";
-import { ppOcrAdapterName } from "../@core/infra/ocr/ppocr.adapter/ppocr_settings";
-import { mangaOcrAdapterName } from "../@core/infra/ocr/manga_ocr.adapter/manga_ocr_settings";
-import { appleVisionAdapterName } from "../@core/infra/ocr/apple_vision.adapter/apple_vision_settings";
 import { cloudVisionOcrAdapterName } from "../@core/infra/ocr/cloud_vision_ocr.adapter/cloud_vision_ocr_settings";
 import url from "url";
 
@@ -476,20 +473,8 @@ export class AppController {
             await this.handleOcrCommand();
             return true;
         }
-        else if ( command === 'ocr/apple-vision' ) {
-            await this.handleOcrCommand({ engineName: appleVisionAdapterName });
-            return true;
-        }
         else if ( command === 'ocr/cloud-vision' ) {
             await this.handleOcrCommand({ engineName: cloudVisionOcrAdapterName });
-            return true;
-        }
-        else if ( command === 'ocr/paddleocr' ) {
-            await this.handleOcrCommand({ engineName: ppOcrAdapterName });
-            return true;
-        }
-        else if ( command === 'ocr/mangaocr' ) {
-            await this.handleOcrCommand({ engineName: mangaOcrAdapterName });
             return true;
         }
         else {

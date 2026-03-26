@@ -302,7 +302,6 @@ export const SettingsProvider = ( { children }: PropsWithChildren ) => {
         getActiveSettingsPreset();
         getDefaultSettingsPreset();
         checkGoogleCookies();
-        getHardwareAccelerationOptions('MangaOcrAdapter');
 
         return () => {
             ipcRenderer.removeAllListeners( 'settings_preset:active_data' );

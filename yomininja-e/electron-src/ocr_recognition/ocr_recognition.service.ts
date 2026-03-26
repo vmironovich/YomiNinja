@@ -10,7 +10,6 @@ import { Language } from "../@core/domain/language/language";
 import { CaptureSource, ExternalWindow } from "./common/types";
 import sharp from 'sharp';
 import { GetSupportedLanguagesUseCaseInstance, RecognizeImageUseCaseInstance, RecognizeSelectionUseCaseInstance } from "../@core/infra/types/use_case_instance.types";
-import { PpOcrAdapter } from "../@core/infra/ocr/ppocr.adapter/ppocr.adapter";
 import { OcrEngineSettingsU } from "../@core/infra/types/entity_instance.types";
 import { OcrEngineSettings } from "../@core/domain/settings_preset/settings_preset";
 import isDev from "electron-is-dev";
@@ -144,10 +143,7 @@ export class OcrRecognitionService < TOcrSettings extends OcrEngineSettings = Oc
         const supportedOcrAdapters = this.recognizeImageUseCase.getSupportedOcrEngines();
         
         const dict: { [key: string]: string; } = {
-            'PpOcrAdapter': 'PaddleOCR',
             'CloudVisionOcrAdapter': 'Google Cloud Vision',
-            'MangaOcrAdapter': 'MangaOCR',
-            'AppleVisionAdapter': 'Apple Vision',
         };
 
         // Removing unsupported ocr options

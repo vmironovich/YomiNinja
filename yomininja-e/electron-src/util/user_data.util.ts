@@ -3,7 +3,6 @@ import { USER_DATA_DIR } from './directories.util';
 import path, { join } from 'path';
 import { app } from 'electron';
 import { get_MainDataSource } from '../@core/infra/container_registry/db_registry';
-import { pyOcrService } from '../@core/infra/ocr/ocr_services/py_ocr_service/_temp_index';
 
 const userDataVersionPath = join(USER_DATA_DIR, 'yn_version.txt');
 
@@ -31,22 +30,18 @@ export function isUserDataCompatible(): boolean {
     const userDataVersion = getUserDataVersion();
 
     if ( userDataVersion !== getExpectedUserDataVersion() )
-        return false
-
-    if ( !pyOcrService.isPythonInstalled() )
         return false;
-    
+
     return true;
 }
 
 export function removeIncompatibleFiles() {
-    // PaddleOCR v4 preset
+    // Legacy cleanup
     fs.rmSync(
         join( USER_DATA_DIR, '/ppocr' ),
         { recursive: true, force: true }
     );
-    
-    // Binaries
+
     fs.rmSync(
         join( USER_DATA_DIR, '/bin/py_ocr_service/python' ),
         { recursive: true, force: true }
@@ -65,12 +60,6 @@ export function updateUserDataStructure() {
     const newDbDirPath = path.dirname( newDbPath );
 
     const oldDbPathExists = fs.existsSync( oldDbDirPath );
-
-    // console.log({
-    //     oldDbDirPath,
-    //     newDbDirPath,
-    //     oldDbPathExists
-    // });
 
     if ( !oldDbPathExists )
         return;

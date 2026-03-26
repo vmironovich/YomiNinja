@@ -426,7 +426,7 @@ export class OcrRecognitionController {
 
     async installOcrModels() {
 
-        const ocrAdapters = [ 'MangaOcrAdapter' ];
+        const ocrAdapters: string[] = [];
 
         for ( const ocrAdapter of ocrAdapters ) {
 

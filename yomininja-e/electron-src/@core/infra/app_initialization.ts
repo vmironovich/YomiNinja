@@ -6,16 +6,11 @@ import { get_DictionaryDataSource, get_MainDataSource } from "./container_regist
 import { get_LanguageRepository, get_ProfileRepository, get_SettingsPresetRepository } from "./container_registry/repositories_registry";
 import os from 'os';
 import LanguageTypeOrmRepository from './db/typeorm/language/language.typeorm.repository';
-import { applyCpuHotfix } from './ocr/ppocr.adapter/hotfix/hardware_compatibility_hotfix';
 import { get_CreateSettingsPresetUseCaseInstance, get_GetActiveSettingsPresetUseCase, get_UpdateSettingsPresetUseCaseInstance } from './container_registry/use_cases_registry';
-import { get_PpOcrAdapter } from './container_registry/adapters_registry';
 import { WindowManager } from '../../../gyp_modules/window_management/window_manager';
-import { ppOcrAdapterName } from './ocr/ppocr.adapter/ppocr_settings';
 import { getDefaultSettingsPresetProps } from '../domain/settings_preset/default_settings_preset_props';
 import semver from 'semver';
-import { cloudVisionOcrAdapterName, getCloudVisionDefaultSettings } from './ocr/cloud_vision_ocr.adapter/cloud_vision_ocr_settings';
-import { pyOcrService } from './ocr/ocr_services/py_ocr_service/_temp_index';
-import { paddleOcrService } from './ocr/ocr_services/paddle_ocr_service/_temp_index';
+import { cloudVisionOcrAdapterName } from './ocr/cloud_vision_ocr.adapter/cloud_vision_ocr_settings';
 import fs from 'fs';
 import path from 'path';
 import { USER_DATA_DIR } from '../../util/directories.util';
@@ -98,9 +93,6 @@ export async function initializeApp() {
     
     try {
 
-        // createServer();
-        const serviceStartupPromise = startServices();
-
         // Initializing database
         await get_MainDataSource().initialize();
         const dictionaryDataSource = await get_DictionaryDataSource().initialize();
@@ -121,8 +113,6 @@ export async function initializeApp() {
         const profileRepo = get_ProfileRepository();
 
         await populateLanguagesRepository( languageRepo );
-
-        await serviceStartupPromise;
 
         // console.log('Initializing settings...');
         let defaultSettingsPreset = await settingsPresetRepo.findOne({ name: SettingsPreset.default_name });
@@ -161,9 +151,6 @@ export async function initializeApp() {
             });
         }
 
-        await servicesHealthCheck();
-
-        
         // console.log('Initializing languages...');
         let defaultLanguage = await languageRepo.findOne({ name: 'japanese' });
         if ( !defaultLanguage ) {
@@ -181,13 +168,13 @@ export async function initializeApp() {
             defaultProfile = Profile.create({
                 active_ocr_language: defaultLanguage,
                 active_settings_preset: defaultSettingsPreset,
-                selected_ocr_adapter_name: ppOcrAdapterName
+                selected_ocr_adapter_name: cloudVisionOcrAdapterName
             });
             await profileRepo.insert( defaultProfile );
         }
         
         if ( !defaultProfile?.selected_ocr_adapter_name ) {
-            defaultProfile.selected_ocr_adapter_name = ppOcrAdapterName;
+            defaultProfile.selected_ocr_adapter_name = cloudVisionOcrAdapterName;
             await profileRepo.update( defaultProfile );
         }
 
@@ -209,42 +196,6 @@ export async function initializeApp() {
 export function getActiveProfile(): Profile {
     return activeProfile;
 }
-
-async function startServices() {
-
-    const serviceStartupPromises: Promise<unknown>[] = [];
-
-    if ( !isMacOS ) {
-        serviceStartupPromises.push(
-            new Promise( resolve => paddleOcrService.startProcess( resolve ) )
-        );
-    }
-    serviceStartupPromises.push( new Promise( resolve => pyOcrService.startProcess( resolve ) ) );
-
-    await Promise.all( serviceStartupPromises );
-    await servicesHealthCheck();
-
-    const quit = () => {
-        paddleOcrService.disable();
-        pyOcrService.disable();
-        // app.quit();
-    };
-
-    appExitHandler.setAppExitHandler( quit );
-}
-
-async function servicesHealthCheck() {
-
-    const serviceHealthCheckPromises: Promise<unknown>[] = [];
-
-    if ( !isMacOS ) {
-        serviceHealthCheckPromises.push( paddleOcrService.processStatusCheck() )
-    }
-    serviceHealthCheckPromises.push( pyOcrService.processStatusCheck() );
-
-    await Promise.all( serviceHealthCheckPromises );
-}
-
 
 export function getLaunchConfig(): LaunchConfig {
 

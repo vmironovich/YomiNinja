@@ -1,7 +1,7 @@
 import { OcrItem, OcrResult, OcrResultContextResolution, OcrResult_CreationInput } from "../../../domain/ocr_result/ocr_result";
 import { OcrAdapter, OcrAdapterStatus, OcrEngineSettingsOptions, OcrRecognitionInput, TextRecognitionModel, UpdateOcrAdapterSettingsOutput } from "../../../application/adapters/ocr.adapter";
 import { OcrEngineSettings } from "../../../domain/settings_preset/settings_preset";
-import { PpOcrEngineSettings, getPpOcrDefaultSettings } from "../../ocr/ppocr.adapter/ppocr_settings";
+import { CloudVisionOcrEngineSettings, getCloudVisionDefaultSettings } from "../../ocr/cloud_vision_ocr.adapter/cloud_vision_ocr_settings";
 import { OcrResultScalable } from "../../../domain/ocr_result_scalable/ocr_result_scalable";
 
 const ocrTestAdapterResultProps: OcrResult_CreationInput = {
@@ -27,7 +27,7 @@ const ocrTestAdapterResultProps: OcrResult_CreationInput = {
     ]
 };
 
-export type FakeOcrEngineSettings = PpOcrEngineSettings;
+export type FakeOcrEngineSettings = CloudVisionOcrEngineSettings;
 
 export class FakeOcrTestAdapter implements OcrAdapter< FakeOcrEngineSettings > {
 
@@ -95,7 +95,7 @@ export class FakeOcrTestAdapter implements OcrAdapter< FakeOcrEngineSettings > {
 
     getDefaultSettings(): FakeOcrEngineSettings {
         return {
-            ...getPpOcrDefaultSettings(),
+            ...getCloudVisionDefaultSettings(),
             ocr_adapter_name: FakeOcrTestAdapter._name
         };
     }

@@ -12,8 +12,6 @@ import { USER_DATA_DIR } from './util/directories.util';
 import fs from 'fs';
 import path from 'path';
 import { getLaunchConfig } from './@core/infra/app_initialization';
-import { pyOcrService } from './@core/infra/ocr/ocr_services/py_ocr_service/_temp_index';
-import { paddleOcrService } from './@core/infra/ocr/ocr_services/paddle_ocr_service/_temp_index';
 import { app, globalShortcut, Notification } from 'electron';
 const isMacOS = process.platform === 'darwin';
 
@@ -34,22 +32,19 @@ else {
     if ( process.platform === 'win32' ) {
       app.setAppUserModelId(app.name);
     }
-  
+
     // Prepare the renderer once the app is ready
     await prepareNext('./renderer');
-  
+
     startUIOhook();
     await appController.init();
   });
-  
+
   // Quit the app once all windows are closed
   app.on('window-all-closed', () => {
 
-    pyOcrService.killServiceProcess();
-    paddleOcrService.killServiceProcess();
-  
     globalShortcut.unregisterAll();
-  
+
     if ( process.platform !== 'darwin' ) {
       uIOhook.removeAllListeners();
       uIOhook.stop();
@@ -57,7 +52,7 @@ else {
     else {
       setTimeout( process.exit, 2000 );
     }
-    
+
     app.quit();
   });
 }
@@ -79,7 +74,7 @@ function preInitialization() {
 
   if ( launchConfig.hardware_acceleration === false ) {
     app.disableHardwareAcceleration();
-    console.log("Hardware Acceleration is disabled!"); 
+    console.log("Hardware Acceleration is disabled!");
   }
   if ( launchConfig.gpu_compositing === false ) {
     app.commandLine.appendArgument(
@@ -87,7 +82,7 @@ function preInitialization() {
     );
     console.log("GPU Compositing is disabled!");
   }
-  
+
 }
 
 async function postInstallSetup() {
@@ -101,10 +96,8 @@ async function postInstallSetup() {
   })).show();
 
   updateUserDataStructure();
-  
-  removeIncompatibleFiles();
 
-  try { pyOcrService.installPython(); } catch (e) { console.error('pyOcrService.installPython failed:', e); }
+  removeIncompatibleFiles();
 
   updateUserDataVersion();
 }

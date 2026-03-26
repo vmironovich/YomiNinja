@@ -90,21 +90,6 @@ export default function HotkeyHints() {
 
     const overlayHotkeys = activeSettingsPreset?.overlay.hotkeys;
 
-    const ppOcrSettings = activeSettingsPreset?.ocr_engines
-        .find( engineSettings => {
-            return engineSettings.ocr_adapter_name === 'PpOcrAdapter'
-        });
-
-    const mangaOcrSettings = activeSettingsPreset?.ocr_engines
-        .find( engineSettings => {
-            return engineSettings.ocr_adapter_name === 'MangaOcrAdapter'
-        });
-
-    const appleVisionSettings = activeSettingsPreset?.ocr_engines
-        .find( engineSettings => {
-            return engineSettings.ocr_adapter_name === 'AppleVisionAdapter'
-        });
-
     const cloudVisionSettings = activeSettingsPreset?.ocr_engines
         .find( engineSettings => {
             return engineSettings.ocr_adapter_name === 'CloudVisionOcrAdapter'
@@ -135,15 +120,6 @@ export default function HotkeyHints() {
                 m='auto' width='100%'
             >
                 { createHotkeyHint( 'Primary OCR', ocrHotkeysStrings ) }
-
-                { appleVisionSettings &&
-                  createHotkeyHint( 'Apple Vision', [appleVisionSettings?.hotkey] ) }
-
-                { ppOcrSettings && 
-                  createHotkeyHint( 'PaddleOCR', [ppOcrSettings?.hotkey] ) }
-                
-                { createHotkeyHint( 'MangaOCR', [mangaOcrSettings?.hotkey] ) }
-
 
                 { createHotkeyHint( 'Cloud Vision', [cloudVisionSettings?.hotkey] ) }
 

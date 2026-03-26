@@ -6,9 +6,6 @@ import { CloudVisionAPICredentials } from "../@core/infra/ocr/cloud_vision_ocr.a
 import { CloudVisionOcrEngineSettings, cloudVisionOcrAdapterName, getCloudVisionDefaultSettings } from "../@core/infra/ocr/cloud_vision_ocr.adapter/cloud_vision_ocr_settings";
 import { UpdateSettingsPresetUseCaseInstance } from "../@core/infra/types/use_case_instance.types";
 import { getDefaultSettingsPresetProps } from "../@core/domain/settings_preset/default_settings_preset_props";
-import { getPpOcrDefaultSettings } from "../@core/infra/ocr/ppocr.adapter/ppocr_settings";
-import { getMangaOcrDefaultSettings } from "../@core/infra/ocr/manga_ocr.adapter/manga_ocr_settings";
-import { getAppleVisionDefaultSettings } from "../@core/infra/ocr/apple_vision.adapter/apple_vision_settings";
 import { activeProfile, getLaunchConfig } from "../@core/infra/app_initialization";
 import { USER_DATA_DIR } from "../util/directories.util";
 import path from "path";
@@ -144,10 +141,7 @@ export class SettingsService {
         const defaultProps = getDefaultSettingsPresetProps();
 
         defaultProps.ocr_engines = [
-            getPpOcrDefaultSettings(),
             getCloudVisionDefaultSettings(),
-            getMangaOcrDefaultSettings(),
-            getAppleVisionDefaultSettings(),
         ]
 
         return SettingsPreset.create( defaultProps );

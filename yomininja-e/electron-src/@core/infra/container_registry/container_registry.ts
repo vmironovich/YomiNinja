@@ -12,10 +12,7 @@ export const Registry = {
     DictionaryDataSource: Symbol.for('DictionaryDataSource'),
 
     // Adapters
-    PpOcrAdapter: Symbol.for('PpOcrAdapter'),
     CloudVisionOcrAdapter: Symbol.for('CloudVisionOcrAdapter'),
-    MangaOcrAdapter: Symbol.for('MangaOcrAdapter'),
-    AppleVisionAdapter: Symbol.for('AppleVisionAdapter'),
     SharpImageProcessingAdapter: Symbol.for('SharpImageProcessingAdapter'),
     GithubAppVersionProviderAdapter: Symbol.for('GithubAppVersionProviderAdapter'),
     FakeAppVersionProviderAdapter: Symbol.for('FakeAppVersionProviderAdapter'),

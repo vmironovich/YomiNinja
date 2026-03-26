@@ -20,36 +20,20 @@ export default function AppSettingsHotkeys() {
         systemInfo
     } = useContext( AppInfoContext );
 
-    const appleVisionSettings = getOcrEngineSettings('AppleVisionAdapter');
-    const appleVisionDefaultSettings = getOcrEngineSettings('AppleVisionAdapter', true);
-
-    const ppOcrSettings = getOcrEngineSettings('PpOcrAdapter');
-    const ppOcrDefaultSettings = getOcrEngineSettings('PpOcrAdapter', true);
-
-    const mangaOcrSettings = getOcrEngineSettings('MangaOcrAdapter');
-    const mangaOcrDefaultSettings = getOcrEngineSettings('MangaOcrAdapter', true);
-
     const cloudVisionSettings = getOcrEngineSettings('CloudVisionOcrAdapter');
     const cloudVisionDefaultSettings = getOcrEngineSettings('CloudVisionOcrAdapter', true);
 
-    // const [ copyTextKeys, setCopyTextKeys ] = useState< HotkeyCombination >();
-    
-    
     const overlayHotkeys = activeSettingsPreset?.overlay.hotkeys;
     const overlayDefaultHotkeys = defaultSettingsPreset?.overlay.hotkeys;
-    
+
     const ocrKeys = stringToHotkeyCombination( overlayHotkeys?.ocr );
     const copyTextKeys = stringToHotkeyCombination( overlayHotkeys?.copy_text );
     const toggleOverlayKeys = stringToHotkeyCombination( overlayHotkeys?.toggle );
     const showOverlayKeys = stringToHotkeyCombination( overlayHotkeys?.show );
     const clearOverlayKeys = stringToHotkeyCombination( overlayHotkeys?.clear );
     const manualAdjustmentOverlayKeys = stringToHotkeyCombination( overlayHotkeys?.manual_adjustment );
-    // const [ ocrOnPrintScreen, setOcrOnPrintScreen ] = useState< boolean >( Boolean(overlayHotkeys?.ocr_on_screen_shot) );
     const ocrOnPrintScreen = Boolean(overlayHotkeys?.ocr_on_screen_shot);
 
-    const appleVisionKeys = stringToHotkeyCombination( appleVisionSettings?.hotkey );
-    const paddleOcrKeys = stringToHotkeyCombination( ppOcrSettings?.hotkey );
-    const mangaOcrKeys = stringToHotkeyCombination( mangaOcrSettings?.hotkey );
     const cloudVisionKeys = stringToHotkeyCombination( cloudVisionSettings?.hotkey );
     function stringToHotkeyCombination( hotkeyString: string ): string {
         return hotkeyString?.split('+').join( ' + ' ) || '';
@@ -163,53 +147,6 @@ export default function AppSettingsHotkeys() {
                 />
                 {ocrOnPrintScreenSwitch}
                 
-                { appleVisionSettings &&
-                    <HotkeyFields
-                        label='Apple Vision'
-                        keyCombination={ appleVisionKeys }
-                        defaultKeys={appleVisionDefaultSettings?.hotkey}
-                        onChangeHandler={ ( input?: string[]  ) => {
-                            if ( !input ) return;
-                            updateActivePresetOcrEngine({
-                                ...appleVisionSettings,
-                                hotkey: hotkeyCombinationToString( input )
-                            });
-                        }}
-                        commandLine={ getCmdLine('/ocr/apple-vision') }
-                    />
-                }
-
-                { ppOcrSettings &&
-                    <HotkeyFields
-                        label='PaddleOCR'
-                        keyCombination={ paddleOcrKeys }
-                        defaultKeys={ppOcrDefaultSettings?.hotkey}
-                        // setStateAction={ setOcrKeys }
-                        onChangeHandler={ ( input?: string[]  ) => {
-                            if ( !input ) return;
-                            updateActivePresetOcrEngine({
-                                ...ppOcrSettings,
-                                hotkey: hotkeyCombinationToString( input )
-                            });
-                        }}
-                        commandLine={ getCmdLine('/ocr/paddleocr') }
-                    />
-                }
-
-                <HotkeyFields
-                    label='MangaOCR'
-                    keyCombination={ mangaOcrKeys }
-                    defaultKeys={mangaOcrDefaultSettings?.hotkey}
-                    onChangeHandler={ ( input?: string[]  ) => {
-                        if ( !input ) return;
-                        updateActivePresetOcrEngine({
-                            ...mangaOcrSettings,
-                            hotkey: hotkeyCombinationToString( input )
-                        });
-                    }}
-                    commandLine={ getCmdLine('/ocr/mangaocr') }
-                />
-
                 <HotkeyFields
                     label='Cloud Vision'
                     keyCombination={ cloudVisionKeys }
