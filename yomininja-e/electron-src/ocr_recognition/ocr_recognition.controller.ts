@@ -342,12 +342,30 @@ export class OcrRecognitionController {
             const settingsPreset = await this.ocrRecognitionService.getActiveSettingsPreset();
             const translation = settingsPreset?.translation;
 
-            if ( !translation?.enabled ) return;
+            console.log('[Translation] Settings:', JSON.stringify({
+                enabled: translation?.enabled,
+                source: translation?.source,
+                target_language: translation?.target_language,
+                api_key: translation?.api_key ? '***set***' : '***empty***',
+                model: translation?.model,
+                koboldcpp_host: translation?.koboldcpp_host,
+            }));
+
+            if ( !translation?.enabled ) {
+                console.log('[Translation] Disabled, skipping');
+                return;
+            }
 
             const source = translation.source || 'gemini';
 
-            if ( source === 'gemini' && !translation.api_key ) return;
-            if ( source === 'koboldcpp' && !translation.koboldcpp_host ) return;
+            if ( source === 'gemini' && !translation.api_key ) {
+                console.log('[Translation] Gemini API key not set, skipping');
+                return;
+            }
+            if ( source === 'koboldcpp' && !translation.koboldcpp_host ) {
+                console.log('[Translation] KoboldCpp host not set, skipping');
+                return;
+            }
 
             const textLines: string[] = [];
             const lineRefs: { regionIdx: number; resultIdx: number; textIdx: number }[] = [];
@@ -363,10 +381,13 @@ export class OcrRecognitionController {
                 });
             });
 
+            console.log(`[Translation] ${textLines.length} text lines to translate:`, textLines);
+
             if ( !textLines.length ) return;
 
             let translatedLines: string[];
 
+            console.time('[Translation] API call');
             if ( source === 'koboldcpp' ) {
                 translatedLines = await translateTextLinesKoboldCpp({
                     textLines,
@@ -381,6 +402,9 @@ export class OcrRecognitionController {
                     model: translation.model || 'gemini-3.1-flash-lite-preview',
                 });
             }
+            console.timeEnd('[Translation] API call');
+
+            console.log('[Translation] Results:', translatedLines);
 
             translatedLines.forEach( ( translated, i ) => {
                 const ref = lineRefs[i];
@@ -391,7 +415,7 @@ export class OcrRecognitionController {
             });
 
         } catch ( error ) {
-            console.error( 'Translation failed:', error );
+            console.error( '[Translation] Failed:', error );
             pushInAppNotification({
                 notification: {
                     type: 'error',

@@ -42,6 +42,11 @@ export const SettingsPresetTypeOrmSchema = new EntitySchema< SettingsPresetInsta
             nullable: true
         },
 
+        translation: {
+            type: 'json',
+            nullable: true
+        },
+
         version: {
             type: String,
             length: 50,
