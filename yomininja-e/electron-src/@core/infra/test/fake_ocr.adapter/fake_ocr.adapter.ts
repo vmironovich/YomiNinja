@@ -1,7 +1,6 @@
 import { OcrItem, OcrResult, OcrResultContextResolution, OcrResult_CreationInput } from "../../../domain/ocr_result/ocr_result";
 import { OcrAdapter, OcrAdapterStatus, OcrEngineSettingsOptions, OcrRecognitionInput, TextRecognitionModel, UpdateOcrAdapterSettingsOutput } from "../../../application/adapters/ocr.adapter";
 import { OcrEngineSettings } from "../../../domain/settings_preset/settings_preset";
-import { CloudVisionOcrEngineSettings, getCloudVisionDefaultSettings } from "../../ocr/cloud_vision_ocr.adapter/cloud_vision_ocr_settings";
 import { OcrResultScalable } from "../../../domain/ocr_result_scalable/ocr_result_scalable";
 
 const ocrTestAdapterResultProps: OcrResult_CreationInput = {
@@ -27,7 +26,7 @@ const ocrTestAdapterResultProps: OcrResult_CreationInput = {
     ]
 };
 
-export type FakeOcrEngineSettings = CloudVisionOcrEngineSettings;
+export type FakeOcrEngineSettings = OcrEngineSettings;
 
 export class FakeOcrTestAdapter implements OcrAdapter< FakeOcrEngineSettings > {
 
@@ -79,12 +78,7 @@ export class FakeOcrTestAdapter implements OcrAdapter< FakeOcrEngineSettings > {
 
         let restart = false;
 
-        if (
-            !oldSettings ||
-            oldSettings?.cpu_threads != settingsUpdate.cpu_threads ||
-            oldSettings?.max_image_width != settingsUpdate.max_image_width ||
-            oldSettings?.inference_runtime != settingsUpdate.inference_runtime
-        )
+        if ( !oldSettings )
             restart = true;
 
         return {
@@ -95,8 +89,10 @@ export class FakeOcrTestAdapter implements OcrAdapter< FakeOcrEngineSettings > {
 
     getDefaultSettings(): FakeOcrEngineSettings {
         return {
-            ...getCloudVisionDefaultSettings(),
-            ocr_adapter_name: FakeOcrTestAdapter._name
+            ocr_adapter_name: FakeOcrTestAdapter._name,
+            image_scaling_factor: 1,
+            invert_colors: false,
+            hotkey: '',
         };
     }
 
