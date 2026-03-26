@@ -32,9 +32,6 @@ export default function AppSettingsHotkeys() {
     const cloudVisionSettings = getOcrEngineSettings('CloudVisionOcrAdapter');
     const cloudVisionDefaultSettings = getOcrEngineSettings('CloudVisionOcrAdapter', true);
 
-    const googleLensSettings = getOcrEngineSettings('GoogleLensOcrAdapter');
-    const googleLensDefaultSettings = getOcrEngineSettings('GoogleLensOcrAdapter', true);
-    
     // const [ copyTextKeys, setCopyTextKeys ] = useState< HotkeyCombination >();
     
     
@@ -54,8 +51,6 @@ export default function AppSettingsHotkeys() {
     const paddleOcrKeys = stringToHotkeyCombination( ppOcrSettings?.hotkey );
     const mangaOcrKeys = stringToHotkeyCombination( mangaOcrSettings?.hotkey );
     const cloudVisionKeys = stringToHotkeyCombination( cloudVisionSettings?.hotkey );
-    const googleLensKeys = stringToHotkeyCombination( googleLensSettings?.hotkey );
-
     function stringToHotkeyCombination( hotkeyString: string ): string {
         return hotkeyString?.split('+').join( ' + ' ) || '';
     }
@@ -213,21 +208,6 @@ export default function AppSettingsHotkeys() {
                         });
                     }}
                     commandLine={ getCmdLine('/ocr/mangaocr') }
-                />
-
-                <HotkeyFields
-                    label='Google Lens'
-                    keyCombination={ googleLensKeys }
-                    defaultKeys={googleLensDefaultSettings?.hotkey}
-                    // setStateAction={ setOcrKeys }
-                    onChangeHandler={ ( input?: string[]  ) => {
-                        if ( !input ) return;
-                        updateActivePresetOcrEngine({
-                            ...googleLensSettings,
-                            hotkey: hotkeyCombinationToString( input )
-                        });
-                    }}
-                    commandLine={ getCmdLine('/ocr/google-lens') }
                 />
 
                 <HotkeyFields

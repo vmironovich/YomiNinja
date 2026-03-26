@@ -14,7 +14,6 @@ export const Registry = {
     // Adapters
     PpOcrAdapter: Symbol.for('PpOcrAdapter'),
     CloudVisionOcrAdapter: Symbol.for('CloudVisionOcrAdapter'),
-    GoogleLensOcrAdapter: Symbol.for('GoogleLensOcrAdapter'),
     MangaOcrAdapter: Symbol.for('MangaOcrAdapter'),
     AppleVisionAdapter: Symbol.for('AppleVisionAdapter'),
     SharpImageProcessingAdapter: Symbol.for('SharpImageProcessingAdapter'),

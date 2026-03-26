@@ -30,7 +30,6 @@ import { sleep } from "../util/sleep.util";
 import electronIsDev from "electron-is-dev";
 import { ipcMain } from "../common/ipc_main";
 import { isLinux, isWaylandDisplay, isWindows, isMacOS } from "../util/environment.util";
-import { googleLensOcrAdapterName } from "../@core/infra/ocr/google_lens_ocr.adapter/google_lens_ocr_settings";
 import { ppOcrAdapterName } from "../@core/infra/ocr/ppocr.adapter/ppocr_settings";
 import { mangaOcrAdapterName } from "../@core/infra/ocr/manga_ocr.adapter/manga_ocr_settings";
 import { appleVisionAdapterName } from "../@core/infra/ocr/apple_vision.adapter/apple_vision_settings";
@@ -479,10 +478,6 @@ export class AppController {
         }
         else if ( command === 'ocr/apple-vision' ) {
             await this.handleOcrCommand({ engineName: appleVisionAdapterName });
-            return true;
-        }
-        else if ( command === 'ocr/google-lens' ) {
-            await this.handleOcrCommand({ engineName: googleLensOcrAdapterName });
             return true;
         }
         else if ( command === 'ocr/cloud-vision' ) {

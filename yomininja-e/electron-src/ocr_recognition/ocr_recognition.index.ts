@@ -1,4 +1,4 @@
-import { get_CloudVisionOcrAdapter, get_GoogleLensOcrAdapter, get_MangaOcrAdapter, get_PpOcrAdapter } from "../@core/infra/container_registry/adapters_registry";
+import { get_CloudVisionOcrAdapter, get_MangaOcrAdapter, get_PpOcrAdapter } from "../@core/infra/container_registry/adapters_registry";
 import { get_ChangeActiveOcrLanguageUseCase, get_GetActiveSettingsPresetUseCase, get_GetSupportedLanguagesUseCaseInstance, get_RecognizeImageUseCaseInstance, get_RecognizeSelectionUseCaseInstance } from "../@core/infra/container_registry/use_cases_registry";
 import { OcrEngineSettingsU } from "../@core/infra/types/entity_instance.types";
 import { OcrRecognitionController } from "./ocr_recognition.controller";
@@ -7,7 +7,6 @@ import { OcrRecognitionService } from "./ocr_recognition.service";
 const ocrAdapters = [
     get_PpOcrAdapter(),
     get_CloudVisionOcrAdapter(),
-    get_GoogleLensOcrAdapter(),
     get_MangaOcrAdapter(),
 ];
 

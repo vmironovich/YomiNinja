@@ -5,8 +5,6 @@ import { SettingsPreset, SettingsPresetJson, SettingsPresetProps } from "../@cor
 import { CloudVisionAPICredentials } from "../@core/infra/ocr/cloud_vision_ocr.adapter/cloud_vision_api";
 import { CloudVisionOcrEngineSettings, cloudVisionOcrAdapterName, getCloudVisionDefaultSettings } from "../@core/infra/ocr/cloud_vision_ocr.adapter/cloud_vision_ocr_settings";
 import { UpdateSettingsPresetUseCaseInstance } from "../@core/infra/types/use_case_instance.types";
-import { GoogleLensOcrEngineSettings, getGoogleLensDefaultSettings, googleLensOcrAdapterName } from "../@core/infra/ocr/google_lens_ocr.adapter/google_lens_ocr_settings";
-import { get_GoogleLensOcrAdapter } from "../@core/infra/container_registry/adapters_registry";
 import { getDefaultSettingsPresetProps } from "../@core/domain/settings_preset/default_settings_preset_props";
 import { getPpOcrDefaultSettings } from "../@core/infra/ocr/ppocr.adapter/ppocr_settings";
 import { getMangaOcrDefaultSettings } from "../@core/infra/ocr/manga_ocr.adapter/manga_ocr_settings";
@@ -140,8 +138,6 @@ export class SettingsService {
             );
         }
 
-        get_GoogleLensOcrAdapter()
-            .removeCookies();
     }
 
     getDefaultSettings(): SettingsPreset {
@@ -149,7 +145,6 @@ export class SettingsService {
 
         defaultProps.ocr_engines = [
             getPpOcrDefaultSettings(),
-            getGoogleLensDefaultSettings(),
             getCloudVisionDefaultSettings(),
             getMangaOcrDefaultSettings(),
             getAppleVisionDefaultSettings(),

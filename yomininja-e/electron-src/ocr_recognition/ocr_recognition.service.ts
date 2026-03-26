@@ -146,7 +146,6 @@ export class OcrRecognitionService < TOcrSettings extends OcrEngineSettings = Oc
         const dict: { [key: string]: string; } = {
             'PpOcrAdapter': 'PaddleOCR',
             'CloudVisionOcrAdapter': 'Google Cloud Vision',
-            'GoogleLensOcrAdapter': 'Google Lens',
             'MangaOcrAdapter': 'MangaOCR',
             'AppleVisionAdapter': 'Apple Vision',
         };
