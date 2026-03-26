@@ -11,7 +11,6 @@ let buildConfig = {
     "files": [
         "main",
         "renderer/out",
-        "**/*.proto",
         "build"
     ],
     "extraResources": [
@@ -59,10 +58,7 @@ let buildConfig = {
             {
                 "from": `../bin/win32/${TARGET_ARCH}`,
                 "to": "bin",
-                "filter": [
-                    "**/*",
-                    "!py_ocr_service/models/manga_ocr/**/*"
-                ]
+                "filter": "**/*"
             }
         ]
     },
@@ -77,10 +73,7 @@ let buildConfig = {
             {
                 "from": `../bin/linux/${TARGET_ARCH}`,
                 "to": "bin",
-                "filter": [
-                    "**/*",
-                    "!py_ocr_service/models/manga_ocr/**/*"
-                ]
+                "filter": "**/*"
             }
         ],
         "target": [
@@ -100,10 +93,7 @@ let buildConfig = {
             {
                 "from": `../bin/darwin/${TARGET_ARCH}`,
                 "to": "bin",
-                "filter": [
-                    "**/*",
-                    "!py_ocr_service/models/manga_ocr/**/*"
-                ]
+                "filter": "**/*"
             },
             {
                 "from": `./node_modules/uiohook-napi/prebuilds/darwin-${TARGET_ARCH}/node.napi.node`,

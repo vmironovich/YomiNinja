@@ -218,7 +218,6 @@ export class AppController {
         }
         console.timeEnd('YomiNinja Startup time');
 
-        setTimeout( () => ocrRecognitionController.installOcrModels(), 15_000 );
     }
 
     registersIpcHandlers() {

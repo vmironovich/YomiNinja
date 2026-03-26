@@ -12,8 +12,7 @@
 
   KeepData:
     Goto done
-    
+
   done:
-    RMDir /r "$APPDATA\${APP_FILENAME}\ppocr"
 
 !macroend

@@ -3,14 +3,10 @@ import { isUserDataCompatible, removeIncompatibleFiles, updateUserDataStructure,
 updateUserDataStructure();
 import os from 'os';
 console.log({ cpu_model: os.cpus()[0].model.trim() });
-import { httpServer } from './common/server';
 import prepareNext from 'electron-next';
 import './shared_handlers';
 import { uIOhook } from 'uiohook-napi';
 import { appController } from './app/app.index';
-import { USER_DATA_DIR } from './util/directories.util';
-import fs from 'fs';
-import path from 'path';
 import { getLaunchConfig } from './@core/infra/app_initialization';
 import { app, globalShortcut, Notification } from 'electron';
 const isMacOS = process.platform === 'darwin';

@@ -2,10 +2,6 @@
 
     SetShellVarContext current
 
-    RMDir /r "$APPDATA\${APP_FILENAME}\ppocr"
-
-    RMDir /r "$APPDATA\${APP_FILENAME}\bin\py_ocr_service\python"
-
     ; Backing up legacy databases (Windows only)
     IfFileExists "$APPDATA\${APP_FILENAME}\yn_databases\main.db" SkipCopy CopyLegacyDB
     SkipCopy:
@@ -15,11 +11,6 @@
       CopyFiles /SILENT "$APPDATA\${APP_FILENAME}\databases\main.db" "$APPDATA\${APP_FILENAME}\yn_databases\main.db"
 
     done:
-
-    ; CreateDirectory "$APPDATA\${APP_FILENAME}\bin\py_ocr_service\python"
-    ; CopyFiles /FILESONLY "$INSTDIR\resources\bin\py_ocr_service\python\*" "$APPDATA\${APP_FILENAME}\bin\py_ocr_service\python"
-    ; CopyFiles "$INSTDIR\resources\bin\py_ocr_service\python\Scripts\*" "$APPDATA\${APP_FILENAME}\bin\py_ocr_service\python\Scripts"
-    ; CopyFiles "$INSTDIR\resources\bin\py_ocr_service\python\share\*" "$APPDATA\${APP_FILENAME}\bin\py_ocr_service\python\share"
 
 !macroend
 
@@ -39,9 +30,7 @@
 
   KeepData:
     Goto done
-    
+
   done:
-    RMDir /r "$APPDATA\${APP_FILENAME}\ppocr"
-    RMDir /r "$APPDATA\${APP_FILENAME}\bin\py_ocr_service\python"
 
 !macroend

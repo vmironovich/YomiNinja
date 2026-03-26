@@ -1,28 +1,17 @@
-import { BrowserWindow, globalShortcut, screen, desktopCapturer, clipboard, IpcMainInvokeEvent, app } from "electron";
-import isDev from 'electron-is-dev';
-import { join } from "path";
-import { format } from 'url';
-import { PAGES_DIR } from "../util/directories.util";
-import { uIOhook, UiohookKey } from 'uiohook-napi'
-import { activeProfile, getActiveProfile } from "../@core/infra/app_initialization";
-import { OcrRecognitionService, entireScreenAutoCaptureSource } from "./ocr_recognition.service";
+import { BrowserWindow, IpcMainInvokeEvent } from "electron";
+import { getActiveProfile } from "../@core/infra/app_initialization";
+import { OcrRecognitionService } from "./ocr_recognition.service";
 import { SettingsPresetJson } from "../@core/domain/settings_preset/settings_preset";
-import { CaptureSource, ExternalWindow } from "./common/types";
-import { TaskbarProperties } from "../../gyp_modules/window_management/window_manager";
-import sharp from "sharp";
-import os from 'os';
 import { OcrEngineSettingsU } from "../@core/infra/types/entity_instance.types";
 import { InAppNotification } from "../common/types/in_app_notification";
 import { ipcMain } from "../common/ipc_main";
-import { bufferToDataURL } from "../util/image.util";
 import { OcrResultScalable, OcrResultScalableJson } from "../@core/domain/ocr_result_scalable/ocr_result_scalable";
-import { cloneDeep, find } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { Notification } from 'electron';
 import { pushInAppNotification } from "../common/notification_helpers";
 import { HardwareAccelerationOption } from "../@core/application/adapters/ocr.adapter";
 import { translateTextLines } from "../@core/infra/translation/gemini_translation.adapter";
 import { translateTextLinesKoboldCpp } from "../@core/infra/translation/koboldcpp_translation.adapter";
-import { TranslationSettings } from "../@core/domain/settings_preset/settings_preset_translation";
 
 export type Recognition_Output = {
     result: OcrResultScalable | null;
@@ -433,49 +422,11 @@ export class OcrRecognitionController {
             result.image = 'data:image/png;base64,'+Buffer.from(result.image).toString('base64');
         }
 
-        // for ( const region of result.ocr_regions ) {
-        //     if ( !region.image || !Buffer.isBuffer(region.image) )
-        //         continue;
-        //     region.image = await bufferToDataURL({
-        //         image: region.image
-        //     });
-        // }
-
         return result;
     }
 
     resultImage(): Buffer | undefined {
         return this.ocrRequestImageBuffer;
-    }
-
-    async installOcrModels() {
-
-        const ocrAdapters: string[] = [];
-
-        for ( const ocrAdapter of ocrAdapters ) {
-
-            const models = await this.ocrRecognitionService.getSupportedModels(ocrAdapter);
-        
-            for ( const model of models ) {
-                if ( !model.isInstalled && model.name ) {
-
-                    console.log(`Installing OCR model: ${model.name}`);
-                    this.notify({
-                        type: 'info',
-                        title: "Installing OCR model!",
-                        message: `Model: ${model.name}`
-                    });
-
-                    const success = await this.ocrRecognitionService.installOcrModel( ocrAdapter, model.name );
-                    
-                    this.notify({
-                        type: success ? 'info' :'error',
-                        title: success ? "OCR model installed!" : "OCR model installation failed!",
-                        message: `Model: ${model.name}`
-                    });
-                }
-            }
-        }
     }
 
     async installHardwareAcceleration( engineName: string, option: HardwareAccelerationOption ) {

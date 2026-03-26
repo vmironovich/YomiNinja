@@ -34,12 +34,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# gRPC
-**/grpc/rpc/**/*.ts
-**/grpc/rpc/**/*.js
-**/grpc/lens_proto/**/*
-**/grpc/lens/**/*
-
 # build
 main/*
 

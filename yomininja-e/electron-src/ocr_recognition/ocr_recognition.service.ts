@@ -1,16 +1,11 @@
-import { desktopCapturer } from "electron";
-import { TaskbarProperties, WindowManager, WindowProperties } from "../../gyp_modules/window_management/window_manager";
-import { GetSupportedLanguagesUseCase } from "../@core/application/use_cases/get_supported_languages/get_supported_languages.use_case";
-import { RecognizeImageUseCase } from "../@core/application/use_cases/recognize_image/recognize_image.use_case";
 import { OcrResultScalable } from "../@core/domain/ocr_result_scalable/ocr_result_scalable";
 import { GetActiveSettingsPresetUseCase } from "../@core/application/use_cases/get_active_settings_preset/get_active_settings_preset.use_case";
-import { getActiveProfile, windowManager } from "../@core/infra/app_initialization";
+import { getActiveProfile } from "../@core/infra/app_initialization";
 import { HardwareAccelerationOption, OcrAdapter, TextRecognitionModel } from "../@core/application/adapters/ocr.adapter";
 import { Language } from "../@core/domain/language/language";
-import { CaptureSource, ExternalWindow } from "./common/types";
+import { CaptureSource } from "./common/types";
 import sharp from 'sharp';
 import { GetSupportedLanguagesUseCaseInstance, RecognizeImageUseCaseInstance, RecognizeSelectionUseCaseInstance } from "../@core/infra/types/use_case_instance.types";
-import { OcrEngineSettingsU } from "../@core/infra/types/entity_instance.types";
 import { OcrEngineSettings } from "../@core/domain/settings_preset/settings_preset";
 import isDev from "electron-is-dev";
 
