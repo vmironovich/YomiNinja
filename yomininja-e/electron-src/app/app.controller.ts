@@ -100,9 +100,6 @@ export class AppController {
             mainWindow: this.mainWindow
         });
 
-        // if ( isDev )
-            // createDebuggingWindow();
-
         this.createTemporaryTrayIcon();
 
         await initializeApp()
@@ -132,11 +129,9 @@ export class AppController {
 
                 await mainController.loadMainPage( false );
                 
-                // setTimeout( () => { // The timeout seems unnecessary
-                    browserExtensionsController.addBrowserWindow( this.mainWindow, true );
+                browserExtensionsController.addBrowserWindow( this.mainWindow, true );
                     browserExtensionsController.addBrowserWindow( this.overlayWindow, false );
                     await browserExtensionsController.loadExtensions();
-                // }, 500 );
 
                 if ( this.slowInitNotificationTimeout ) {
                     clearTimeout( this.slowInitNotificationTimeout );

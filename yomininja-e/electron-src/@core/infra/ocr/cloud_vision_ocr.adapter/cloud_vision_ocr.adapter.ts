@@ -225,8 +225,6 @@ export class CloudVisionOcrAdapter implements OcrAdapter< CloudVisionOcrEngineSe
         _oldSettings?: OcrEngineSettingsU | undefined
     ): Promise< UpdateOcrAdapterSettingsOutput< CloudVisionOcrEngineSettings > > {
 
-        // TODO: Settings validation
-
         let settingsUpdate = _settingsUpdate as CloudVisionOcrEngineSettings;
         let oldSettings = _oldSettings as CloudVisionOcrEngineSettings;
 

@@ -11,7 +11,7 @@ import { Notification } from 'electron';
 import { pushInAppNotification } from "../common/notification_helpers";
 import { HardwareAccelerationOption } from "../@core/application/adapters/ocr.adapter";
 import { translateTextLines } from "../@core/infra/translation/gemini_translation.adapter";
-import { translateTextLinesKoboldCpp } from "../@core/infra/translation/koboldcpp_translation.adapter";
+
 
 export type Recognition_Output = {
     result: OcrResultScalable | null;
@@ -337,7 +337,6 @@ export class OcrRecognitionController {
                 target_language: translation?.target_language,
                 api_key: translation?.api_key ? '***set***' : '***empty***',
                 model: translation?.model,
-                koboldcpp_host: translation?.koboldcpp_host,
                 hide_non_japanese: translation?.hide_non_japanese,
             }));
 
@@ -352,11 +351,6 @@ export class OcrRecognitionController {
                 console.log('[Translation] Gemini API key not set, skipping');
                 return;
             }
-            if ( source === 'koboldcpp' && !translation.koboldcpp_host ) {
-                console.log('[Translation] KoboldCpp host not set, skipping');
-                return;
-            }
-
             // 1. Collect ALL text lines and track which have Japanese
             const japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\u3400-\u4DBF]/;
             const textLines: string[] = [];
@@ -387,22 +381,13 @@ export class OcrRecognitionController {
             let translatedLines: string[];
 
             console.time('[Translation] API call');
-            if ( source === 'koboldcpp' ) {
-                translatedLines = await translateTextLinesKoboldCpp({
-                    textLines,
-                    targetLanguage: translation.target_language,
-                    host: translation.koboldcpp_host,
-                    extraContext: translation.extra_context,
-                });
-            } else {
-                translatedLines = await translateTextLines({
-                    textLines,
-                    targetLanguage: translation.target_language,
-                    apiKey: translation.api_key,
-                    model: translation.model || 'gemini-3.1-flash-lite-preview',
-                    extraContext: translation.extra_context,
-                });
-            }
+            translatedLines = await translateTextLines({
+                textLines,
+                targetLanguage: translation.target_language,
+                apiKey: translation.api_key,
+                model: translation.model || 'gemini-3.1-flash-lite-preview',
+                extraContext: translation.extra_context,
+            });
             console.timeEnd('[Translation] API call');
             console.log('[Translation] Results:', translatedLines);
 

@@ -23,7 +23,6 @@ export type OcrResultBoxScalable = {
     transform_origin?: 'top' | 'bottom' | 'center';
 };
 
-// TODO: Rename to OcrTextSymbolScalable and add to OcrTextWordScalable
 export type OcrTextLineSymbolScalable = {
     symbol: string;
     box: OcrResultBoxScalable;
@@ -225,7 +224,6 @@ export class OcrResultScalable {
                     );
                 }
 
-                // TODO: Words
                 line?.words?.forEach( ( word, idx ) => {
                     if ( !line?.words?.length ) return;
 

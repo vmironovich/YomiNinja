@@ -74,7 +74,6 @@ export default function TranslationSettings() {
                                 sx={{ width: '200px' }}
                             >
                                 <MenuItem value='gemini'>Gemini</MenuItem>
-                                <MenuItem value='koboldcpp'>KoboldCpp</MenuItem>
                             </Select>
                         }
                     />
@@ -115,26 +114,6 @@ export default function TranslationSettings() {
                                 }}
                             />
                         </>
-                    )}
-
-                    { source === 'koboldcpp' && (
-                        <TextField type="text"
-                            label="KoboldCpp Host"
-                            size="small"
-                            placeholder="http://localhost:5001"
-                            value={ translation?.koboldcpp_host || '' }
-                            onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-                                updateActivePresetTranslation({
-                                    koboldcpp_host: event.target.value
-                                });
-                            }}
-                            sx={{
-                                width: '100%',
-                                maxWidth: '450px',
-                                mt: 0,
-                                mb: 2,
-                            }}
-                        />
                     )}
 
                     <FormControlLabel label='Target language' labelPlacement="top"
