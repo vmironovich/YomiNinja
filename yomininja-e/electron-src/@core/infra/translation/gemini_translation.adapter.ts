@@ -1,4 +1,4 @@
-import { net } from 'electron';
+import { GoogleGenAI } from '@google/genai';
 
 export async function translateTextLines( input: {
     textLines: string[];
@@ -12,21 +12,24 @@ export async function translateTextLines( input: {
     if ( !textLines.length ) return [];
 
     try {
+        const ai = new GoogleGenAI({ apiKey });
+
         const numberedLines = textLines
             .map( ( line, i ) => `[${i + 1}] ${line}` )
             .join('\n');
 
         const prompt = `Translate each numbered line from Japanese to ${targetLanguage}. Return ONLY the translations with the same numbering format. No explanations.\n\n${numberedLines}`;
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-        const body = JSON.stringify({
-            contents: [{
-                parts: [{ text: prompt }]
-            }]
+        const response = await ai.models.generateContent({
+            model,
+            contents: prompt,
         });
 
-        const responseText = await geminiRequest( url, body );
+        const responseText = response.text;
+
+        if ( !responseText ) {
+            throw new Error( 'No text in Gemini response' );
+        }
 
         const translatedLines = parseNumberedResponse( responseText, textLines.length );
 
@@ -43,30 +46,6 @@ export async function translateTextLines( input: {
     }
 }
 
-async function geminiRequest( url: string, body: string ): Promise<string> {
-
-    const response = await net.fetch( url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body,
-    });
-
-    if ( !response.ok ) {
-        const errorBody = await response.text();
-        throw new Error( `Gemini API error ${response.status}: ${errorBody}` );
-    }
-
-    const json = await response.json() as GeminiResponse;
-
-    const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if ( !text ) {
-        throw new Error( 'No text in Gemini response' );
-    }
-
-    return text;
-}
-
 function parseNumberedResponse( responseText: string, expectedCount: number ): string[] {
 
     const lines = responseText.trim().split('\n').filter( line => line.trim() );
@@ -81,11 +60,3 @@ function parseNumberedResponse( responseText: string, expectedCount: number ): s
 
     return result;
 }
-
-type GeminiResponse = {
-    candidates?: {
-        content?: {
-            parts?: { text?: string }[];
-        };
-    }[];
-};
