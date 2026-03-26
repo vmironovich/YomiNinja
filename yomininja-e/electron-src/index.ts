@@ -68,7 +68,7 @@ function startUIOhook(){
 
 function preInitialization() {
 
-  app.commandLine.appendSwitch( 'disable-features', 'WebSQL,WGCScreenCapturer,WGCWindowCapturer' );
+  app.commandLine.appendSwitch( 'disable-features', 'WebSQL' );
 
   const launchConfig = getLaunchConfig();
 
