@@ -90,6 +90,7 @@ export class SettingsPreset < TProps extends SettingsPresetProps = SettingsPrese
 
     set name( value: string ){ this.props.name = value; }
 
+    protected set translation( data: TranslationSettings | undefined ){ this.props.translation = data; }
     protected set general( data: GeneralSettings | undefined ){ this.props.general = data; }
     protected set compatibility( data: CompatibilitySettings ){ this.props.compatibility = data; }
     protected set overlay( update: OverlaySettings ) {
