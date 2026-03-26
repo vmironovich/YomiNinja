@@ -15,7 +15,14 @@ export async function translateTextLinesKoboldCpp( input: {
             .map( ( line, i ) => `[${i + 1}] ${line}` )
             .join('\n');
 
-        const prompt = `Translate each numbered line from Japanese to ${targetLanguage}. Return ONLY the translations with the same numbering format. No explanations.\n\n${numberedLines}`;
+        const prompt = [
+            `You are translating OCR-captured text from a Japanese game screen.`,
+            `The text includes dialogue, UI labels, character names, buttons, and other on-screen elements.`,
+            `Each numbered line is a separate OCR region — consider them in context for accurate translation.`,
+            `Translate each line from Japanese to ${targetLanguage}. If a line is already in ${targetLanguage}, return it unchanged.`,
+            `Return ONLY the translations with the same [N] numbering format. No explanations.\n`,
+            numberedLines
+        ].join('\n');
 
         const url = `${host.replace( /\/+$/, '' )}/api/v1/generate`;
 

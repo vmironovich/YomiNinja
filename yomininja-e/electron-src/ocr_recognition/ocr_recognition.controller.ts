@@ -338,6 +338,7 @@ export class OcrRecognitionController {
                 api_key: translation?.api_key ? '***set***' : '***empty***',
                 model: translation?.model,
                 koboldcpp_host: translation?.koboldcpp_host,
+                hide_non_japanese: translation?.hide_non_japanese,
             }));
 
             if ( !translation?.enabled ) {
@@ -356,57 +357,33 @@ export class OcrRecognitionController {
                 return;
             }
 
+            // 1. Collect ALL text lines and track which have Japanese
             const japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\u3400-\u4DBF]/;
-            const hideNonJapanese = translation.hide_non_japanese;
-
             const textLines: string[] = [];
             const lineRefs: { regionIdx: number; resultIdx: number; textIdx: number }[] = [];
+            const japaneseResultKeys = new Set<string>();
 
             ocrResultScalable.ocr_regions.forEach( ( region, regionIdx ) => {
                 region.results.forEach( ( result, resultIdx ) => {
                     result.text.forEach( ( textLine, textIdx ) => {
                         if ( !textLine.content?.trim() ) return;
-
+                        textLines.push( textLine.content );
+                        lineRefs.push({ regionIdx, resultIdx, textIdx });
                         if ( japaneseRegex.test( textLine.content ) ) {
-                            textLines.push( textLine.content );
-                            lineRefs.push({ regionIdx, resultIdx, textIdx });
+                            japaneseResultKeys.add( `${regionIdx}:${resultIdx}` );
                         }
                     });
                 });
             });
 
-            if ( hideNonJapanese ) {
-                const japaneseResultKeys = new Set(
-                    lineRefs.map( ref => `${ref.regionIdx}:${ref.resultIdx}` )
-                );
-                ocrResultScalable.ocr_regions.forEach( ( region, regionIdx ) => {
-                    region.results = region.results.filter( ( _, resultIdx ) =>
-                        japaneseResultKeys.has( `${regionIdx}:${resultIdx}` )
-                    );
-                });
-
-                // Rebuild lineRefs to match the filtered results
-                lineRefs.length = 0;
-                textLines.length = 0;
-                ocrResultScalable.ocr_regions.forEach( ( region, regionIdx ) => {
-                    region.results.forEach( ( result, resultIdx ) => {
-                        result.text.forEach( ( textLine, textIdx ) => {
-                            if ( textLine.content?.trim() && japaneseRegex.test( textLine.content ) ) {
-                                textLines.push( textLine.content );
-                                lineRefs.push({ regionIdx, resultIdx, textIdx });
-                            }
-                        });
-                    });
-                });
-            }
-
-            console.log(`[Translation] ${textLines.length} text lines to translate:`, textLines);
+            console.log(`[Translation] ${textLines.length} text lines to translate (${japaneseResultKeys.size} Japanese results):`, textLines);
 
             if ( !textLines.length ) {
-                console.log('[Translation] No Japanese text found, skipping');
+                console.log('[Translation] No text found, skipping');
                 return;
             }
 
+            // 2. Translate all lines (full context for the model)
             let translatedLines: string[];
 
             console.time('[Translation] API call');
@@ -425,16 +402,26 @@ export class OcrRecognitionController {
                 });
             }
             console.timeEnd('[Translation] API call');
-
             console.log('[Translation] Results:', translatedLines);
 
+            // 3. Apply translations back
             translatedLines.forEach( ( translated, i ) => {
                 const ref = lineRefs[i];
+                if ( !ref ) return;
                 ocrResultScalable.ocr_regions[ ref.regionIdx ]
                     .results[ ref.resultIdx ]
                     .text[ ref.textIdx ]
                     .content = translated;
             });
+
+            // 4. Remove non-Japanese boxes from overlay if enabled
+            if ( translation.hide_non_japanese ) {
+                ocrResultScalable.ocr_regions.forEach( ( region, regionIdx ) => {
+                    region.results = region.results.filter( ( _, resultIdx ) =>
+                        japaneseResultKeys.has( `${regionIdx}:${resultIdx}` )
+                    );
+                });
+            }
 
         } catch ( error ) {
             console.error( '[Translation] Failed:', error );

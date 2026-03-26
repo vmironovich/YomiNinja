@@ -10,18 +10,33 @@ export async function translateTextLines( input: {
     if ( !textLines.length ) return [];
 
     try {
-        const { GoogleGenAI } = await import('@google/genai');
+        const { GoogleGenAI, Type } = await import('@google/genai');
         const ai = new GoogleGenAI({ apiKey });
 
         const numberedLines = textLines
-            .map( ( line, i ) => `[${i + 1}] ${line}` )
+            .map( ( line, i ) => `${i + 1}. ${line}` )
             .join('\n');
 
-        const prompt = `Translate each numbered line from Japanese to ${targetLanguage}. Return ONLY the translations with the same numbering format. No explanations.\n\n${numberedLines}`;
+        const prompt = [
+            `You are translating OCR-captured text from a Japanese game screen.`,
+            `The text includes dialogue, UI labels, character names, buttons, and other on-screen elements.`,
+            `Each numbered line is a separate OCR region — consider them in context for accurate translation.`,
+            `Translate each line from Japanese to ${targetLanguage}.`,
+            `If a line is already in ${targetLanguage} or is not Japanese, return it unchanged.`,
+            `Return exactly ${textLines.length} translations in the same order.\n`,
+            numberedLines
+        ].join('\n');
 
         const response = await ai.models.generateContent({
             model,
             contents: prompt,
+            config: {
+                responseMimeType: 'application/json',
+                responseSchema: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING }
+                }
+            }
         });
 
         const responseText = response.text;
@@ -30,32 +45,17 @@ export async function translateTextLines( input: {
             throw new Error( 'No text in Gemini response' );
         }
 
-        const translatedLines = parseNumberedResponse( responseText, textLines.length );
+        const translations: string[] = JSON.parse( responseText );
 
-        if ( translatedLines.length !== textLines.length ) {
-            console.error('Translation line count mismatch, falling back to original text');
+        if ( translations.length !== textLines.length ) {
+            console.error(`[Translation] Line count mismatch: got ${translations.length}, expected ${textLines.length}. Falling back to original.`);
             return textLines;
         }
 
-        return translatedLines;
+        return translations;
 
     } catch ( error ) {
-        console.error( 'Translation error:', error );
+        console.error( '[Translation] Gemini error:', error );
         return textLines;
     }
-}
-
-function parseNumberedResponse( responseText: string, expectedCount: number ): string[] {
-
-    const lines = responseText.trim().split('\n').filter( line => line.trim() );
-    const result: string[] = [];
-
-    for ( const line of lines ) {
-        const match = line.match( /^\[(\d+)\]\s*(.+)$/ );
-        if ( match ) {
-            result.push( match[2].trim() );
-        }
-    }
-
-    return result;
 }
