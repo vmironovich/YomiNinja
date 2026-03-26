@@ -104,7 +104,7 @@ async function postInstallSetup() {
   
   removeIncompatibleFiles();
 
-  pyOcrService.installPython();
+  try { pyOcrService.installPython(); } catch (e) { console.error('pyOcrService.installPython failed:', e); }
 
   updateUserDataVersion();
 }
