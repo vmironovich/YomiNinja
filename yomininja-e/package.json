@@ -20,7 +20,7 @@
     "clean": "rimraf dist main renderer/out renderer/.next && node-gyp clean",
     "dev": "npm run build-electron && electron .",
     "build-renderer": "next build renderer",
-    "build-electron": "npm run types-workaround && tsc -p electron-src && tsc -p grpc && webpack --mode production && npm run copy-assets",
+    "build-electron": "npm run types-workaround && tsc -p electron-src && webpack --mode production && npm run copy-assets",
     "build": "npm run build-renderer && npm run build-electron",
     "copy-assets": "node ./copy_assets.js",
     "install-app-deps": "npx @electron/rebuild install-app-deps",
