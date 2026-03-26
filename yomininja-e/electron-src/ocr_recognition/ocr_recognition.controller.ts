@@ -376,10 +376,27 @@ export class OcrRecognitionController {
             });
 
             if ( hideNonJapanese ) {
-                ocrResultScalable.ocr_regions.forEach( region => {
-                    region.results = region.results.filter( result =>
-                        result.text.some( line => japaneseRegex.test( line.content || '' ) )
+                const japaneseResultKeys = new Set(
+                    lineRefs.map( ref => `${ref.regionIdx}:${ref.resultIdx}` )
+                );
+                ocrResultScalable.ocr_regions.forEach( ( region, regionIdx ) => {
+                    region.results = region.results.filter( ( _, resultIdx ) =>
+                        japaneseResultKeys.has( `${regionIdx}:${resultIdx}` )
                     );
+                });
+
+                // Rebuild lineRefs to match the filtered results
+                lineRefs.length = 0;
+                textLines.length = 0;
+                ocrResultScalable.ocr_regions.forEach( ( region, regionIdx ) => {
+                    region.results.forEach( ( result, resultIdx ) => {
+                        result.text.forEach( ( textLine, textIdx ) => {
+                            if ( textLine.content?.trim() && japaneseRegex.test( textLine.content ) ) {
+                                textLines.push( textLine.content );
+                                lineRefs.push({ regionIdx, resultIdx, textIdx });
+                            }
+                        });
+                    });
                 });
             }
 
