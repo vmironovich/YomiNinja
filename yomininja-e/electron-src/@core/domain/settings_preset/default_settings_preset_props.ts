@@ -106,6 +106,7 @@ export function getDefaultSettingsPresetProps(): SettingsPresetProps {
             model: 'gemini-3.1-flash-lite-preview',
             koboldcpp_host: 'http://localhost:5001',
             hide_non_japanese: false,
+            extra_context: '',
         },
 
         created_at: new Date(),

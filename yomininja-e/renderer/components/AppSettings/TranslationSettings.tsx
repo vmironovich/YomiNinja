@@ -165,6 +165,27 @@ export default function TranslationSettings() {
                         }
                     />
 
+                    <TextField type="text"
+                        label="Extra context for prompt"
+                        size="small"
+                        placeholder="e.g. This is a visual novel about..."
+                        multiline
+                        minRows={2}
+                        maxRows={4}
+                        value={ translation?.extra_context || '' }
+                        onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+                            updateActivePresetTranslation({
+                                extra_context: event.target.value
+                            });
+                        }}
+                        sx={{
+                            width: '100%',
+                            maxWidth: '450px',
+                            mt: 0,
+                            mb: 2,
+                        }}
+                    />
+
                 </FormGroup>
 
             </Container>

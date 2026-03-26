@@ -392,6 +392,7 @@ export class OcrRecognitionController {
                     textLines,
                     targetLanguage: translation.target_language,
                     host: translation.koboldcpp_host,
+                    extraContext: translation.extra_context,
                 });
             } else {
                 translatedLines = await translateTextLines({
@@ -399,6 +400,7 @@ export class OcrRecognitionController {
                     targetLanguage: translation.target_language,
                     apiKey: translation.api_key,
                     model: translation.model || 'gemini-3.1-flash-lite-preview',
+                    extraContext: translation.extra_context,
                 });
             }
             console.timeEnd('[Translation] API call');

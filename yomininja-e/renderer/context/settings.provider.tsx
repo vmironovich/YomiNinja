@@ -72,6 +72,7 @@ export const SettingsProvider = ( { children }: PropsWithChildren ) => {
             model: 'gemini-3.1-flash-lite-preview',
             koboldcpp_host: 'http://localhost:5001',
             hide_non_japanese: false,
+            extra_context: '',
             ...activeSettingsPreset?.translation,
             ...input,
         };

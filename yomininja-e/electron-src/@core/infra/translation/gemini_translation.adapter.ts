@@ -3,9 +3,10 @@ export async function translateTextLines( input: {
     targetLanguage: string;
     apiKey: string;
     model: string;
+    extraContext?: string;
 }): Promise<string[]> {
 
-    const { textLines, targetLanguage, apiKey, model } = input;
+    const { textLines, targetLanguage, apiKey, model, extraContext } = input;
 
     if ( !textLines.length ) return [];
 
@@ -17,15 +18,21 @@ export async function translateTextLines( input: {
             .map( ( line, i ) => `${i + 1}. ${line}` )
             .join('\n');
 
-        const prompt = [
+        const promptParts = [
             `You are translating OCR-captured text from a Japanese game screen.`,
             `The text includes dialogue, UI labels, character names, buttons, and other on-screen elements.`,
             `Each numbered line is a separate OCR region — consider them in context for accurate translation.`,
             `Translate each line from Japanese to ${targetLanguage}.`,
             `If a line is already in ${targetLanguage} or is not Japanese, return it unchanged.`,
-            `Return exactly ${textLines.length} translations in the same order.\n`,
-            numberedLines
-        ].join('\n');
+            `Return exactly ${textLines.length} translations in the same order.`,
+        ];
+
+        if ( extraContext?.trim() ) {
+            promptParts.push( `Additional context: ${extraContext.trim()}` );
+        }
+
+        promptParts.push( '', numberedLines );
+        const prompt = promptParts.join('\n');
 
         const response = await ai.models.generateContent({
             model,
