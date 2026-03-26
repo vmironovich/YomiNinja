@@ -272,6 +272,7 @@ export function getLaunchConfig(): LaunchConfig {
             gpu_compositing: true,
             enable_devtools: true
         };
+        fs.mkdirSync( path.dirname(filePath), { recursive: true } );
         fs.writeFileSync(
             filePath,
             JSON.stringify( launchConfig, null, '\t' )
