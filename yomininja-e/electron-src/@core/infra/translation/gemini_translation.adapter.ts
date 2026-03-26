@@ -1,5 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
-
 export async function translateTextLines( input: {
     textLines: string[];
     targetLanguage: string;
@@ -12,6 +10,7 @@ export async function translateTextLines( input: {
     if ( !textLines.length ) return [];
 
     try {
+        const { GoogleGenAI } = await import('@google/genai');
         const ai = new GoogleGenAI({ apiKey });
 
         const numberedLines = textLines
