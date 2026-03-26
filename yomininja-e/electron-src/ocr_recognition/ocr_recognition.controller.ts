@@ -370,12 +370,18 @@ export class OcrRecognitionController {
                         if ( japaneseRegex.test( textLine.content ) ) {
                             textLines.push( textLine.content );
                             lineRefs.push({ regionIdx, resultIdx, textIdx });
-                        } else if ( hideNonJapanese ) {
-                            textLine.content = '';
                         }
                     });
                 });
             });
+
+            if ( hideNonJapanese ) {
+                ocrResultScalable.ocr_regions.forEach( region => {
+                    region.results = region.results.filter( result =>
+                        result.text.some( line => japaneseRegex.test( line.content || '' ) )
+                    );
+                });
+            }
 
             console.log(`[Translation] ${textLines.length} text lines to translate:`, textLines);
 
