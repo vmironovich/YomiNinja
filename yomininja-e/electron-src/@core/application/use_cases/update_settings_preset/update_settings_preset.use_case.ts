@@ -104,8 +104,10 @@ export class UpdateSettingsPresetUseCase< TOcrSettings extends OcrEngineSettings
             ...defaultSettingsProps.compatibility,
             ...input.compatibility,
         });
-
-        // console.log( settingsPreset );
+        settingsPreset.updateTranslationSettings({
+            ...defaultSettingsProps.translation,
+            ...input.translation,
+        });
 
         await this.settingsPresetRepo.update( settingsPreset );
         
