@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@google-cloud/vision": "^4.0.2",
+    "@google/genai": "^1.46.0",
     "@grpc/grpc-js": "^1.9.3",
     "@grpc/proto-loader": "^0.7.13",
     "@types/language-tags": "^1.0.4",
