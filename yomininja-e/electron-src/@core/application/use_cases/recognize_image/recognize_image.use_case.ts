@@ -207,7 +207,7 @@ export class RecognizeImageUseCase< TOcrSettings extends OcrEngineSettings > {
                 // });
     
     
-                if ( motionResult.motionPixelsCount > motionThreshold ) {
+                if ( motionResult && motionResult.motionPixelsCount > motionThreshold ) {
                     // this.isRegionStable = false;
                     this.isRegionStable.set(targetRegion.id, false);
                     // ! useful
@@ -217,7 +217,7 @@ export class RecognizeImageUseCase< TOcrSettings extends OcrEngineSettings > {
                     continue;
                 }
                 else if (
-                    motionResult.motionPixelsCount < motionThreshold &&
+                    motionResult && motionResult.motionPixelsCount < motionThreshold &&
                     !this.isRegionStable.get( targetRegion.id )
                 ) {
                     // this.isRegionStable = true;
