@@ -52,7 +52,7 @@ export class ScreenCapturerController {
             captureSource: input.captureSource,
             force: Boolean(input.force),
             streamFrames: input.streamFrames,
-            showWindow: isDev
+            showWindow: false
         });
     }
 

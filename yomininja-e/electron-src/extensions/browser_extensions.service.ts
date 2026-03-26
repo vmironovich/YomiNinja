@@ -3,6 +3,7 @@ import buildChromeContextMenu from "electron-chrome-context-menu";
 import { ElectronChromeExtensions } from "electron-chrome-extensions";
 import { PopupView } from "electron-chrome-extensions/dist/browser/popup";
 import path, { join } from "path";
+import fs from 'fs';
 import fsP from 'fs/promises';
 import sharp from 'sharp';
 import { USER_EXTENSIONS_DIR } from "../util/directories.util";
@@ -197,6 +198,9 @@ export class BrowserExtensionsService {
             this.session.removeExtension( extension.id );
         });
         this.installedExtensions.clear();
+
+        if ( !fs.existsSync( USER_EXTENSIONS_DIR ) )
+            await fsP.mkdir( USER_EXTENSIONS_DIR, { recursive: true } );
 
         const subDirectories = await fsP.readdir( USER_EXTENSIONS_DIR, {
             withFileTypes: true,

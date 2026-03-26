@@ -20,8 +20,10 @@ export class WindowManagerMacOS implements WindowManagerNativeInterface {
 
     async searchWindowByTitle( title: string ): Promise<WindowProperties[]> {
 
-        if ( !this.hasAccessibilityAccess )
-            return this.requestAccessibility();
+        if ( !this.hasAccessibilityAccess ) {
+            this.requestAccessibility();
+            return [];
+        }
 
         // console.log(`searchWindowByTitle: ${title}`);
 
@@ -75,8 +77,10 @@ export class WindowManagerMacOS implements WindowManagerNativeInterface {
 
     getAllWindows(): WindowProperties[] {
 
-        if ( !this.hasAccessibilityAccess )
-            return this.requestAccessibility();
+        if ( !this.hasAccessibilityAccess ) {
+            this.requestAccessibility();
+            return [];
+        }
 
         const windows: WindowProperties[] = windowManager.getWindows()
             .map( window => {
@@ -146,8 +150,10 @@ export class WindowManagerMacOS implements WindowManagerNativeInterface {
 
     searchWindowByName( windowName: string ): number[] {
 
-        if ( !this.hasAccessibilityAccess )
-            return this.requestAccessibility();
+        if ( !this.hasAccessibilityAccess ) {
+            this.requestAccessibility();
+            return [];
+        }
 
         const ids = windowManager.getWindows()
             .filter( window => window.getTitle().includes( windowName ) )
